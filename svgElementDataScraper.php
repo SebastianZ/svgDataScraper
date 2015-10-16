@@ -85,19 +85,29 @@
         dump($element);
         preg_match('/<table class="standard-table">(?:.+?)<\/table>/s', $response, $infoTableMatches);
         dump($infoTableMatches);
-        preg_match('/<h2[^>]*>Attributes<\/h2>.*?(?=<h2)/s', $response, $attributesMatches);
-        dump($attributesMatches);
-        preg_match_all('/<a.*?href="(.*?)"/', $attributesMatches[0], $attributeURLs);
-        dump($attributeURLs[1]);
+        if (preg_match('/Categories.+?<td>(.+?)<\/td>/s', $infoTableMatches[0], $categoriesMatches)) {
+          $categories = explode(', ', $categoriesMatches[1]);
+          $categories = array_map(function($category) {
+            $words = explode(' ', $category);
+            foreach ($words as $index => $word) {
+              $words[$index] = ($index === 0) ? lcfirst($word) : ucfirst($word);
+            }
+            return implode('', $words);
+          }, $categories);
+          $svgData->elements[$element]->categories = $categories;
+        }
+        if (preg_match('/<h2[^>]*>Attributes<\/h2>.*?(?=<h2)/s', $response, $attributesMatches)) {
+	        preg_match_all('/<a.*?href="(.*?)"/', $attributesMatches[0], $attributeURLs);
 
-        foreach ($attributeURLs[1] as $attributeURL) {
-          $attribute = preg_replace('/^.+\/Attribute/', '', $attributeURL);
-          if ($attribute[0] === '#') {
-          	$attributeType = lcfirst(substr($attribute, 1)) . 'Attributes';
-            array_push($svgData->elements[$element]->attributes, $attributeType);
-          } else {
-            array_push($svgData->elements[$element]->attributes, '\'' . substr($attribute, 1) . '\'');
-          }
+	        foreach ($attributeURLs[1] as $attributeURL) {
+	          $attribute = preg_replace('/^.+\/Attribute/', '', $attributeURL);
+	          if ($attribute[0] === '#') {
+	          	$attributeType = lcfirst(substr($attribute, 1)) . 'Attributes';
+	            array_push($svgData->elements[$element]->attributes, $attributeType);
+	          } else {
+	            array_push($svgData->elements[$element]->attributes, '\'' . substr($attribute, 1) . '\'');
+	          }
+	        }
         }
       }
     }
