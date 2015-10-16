@@ -11,6 +11,12 @@
     public $elements = [];
   }
 
+  class svgElement {
+    public $categories = [];
+    public $attributes = [];
+    public $interfaces = [];
+  }
+
   $svgData = new svgData();
 
   $locales = [
@@ -57,18 +63,16 @@
       // Fetch each element page and parse it
       foreach ($elementURLPaths as $urlPaths) {
         preg_match('/.*\/(.+)$/', $urlPaths, $pageMatch);
-        $page = $pageMatch[1];
-        $filePath = $outputFolder . '/' . $page . '.' . $locale . '.html';
+        $element = $pageMatch[1];
+        $filePath = $outputFolder . '/' . $element . '.' . $locale . '.html';
         if (isset($_GET['refresh']) || !file_exists($filePath)) {
           $fetchLocation = 'https://developer.mozilla.org' . $urlPaths;
         } else {
           $fetchLocation = $filePath;
         }
 
-        $response = file_get_contents($fetchLocation);
-
-        if (isset($_GET['refresh']) || !file_exists($filePath)) {
-          file_put_contents($filePath, $response);
+        if (!isset($svgData->elements[$element])) {
+          $svgData->elements[$element] = new svgElement();
         }
       }
     }
