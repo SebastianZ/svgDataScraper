@@ -74,6 +74,31 @@
         if (!isset($svgData->elements[$element])) {
           $svgData->elements[$element] = new svgElement();
         }
+
+        $response = file_get_contents($fetchLocation);
+
+        if (isset($_GET['refresh']) || !file_exists($filePath)) {
+          file_put_contents($filePath, $response);
+        }
+
+        dump($locale);
+        dump($element);
+        preg_match('/<table class="standard-table">(?:.+?)<\/table>/s', $response, $infoTableMatches);
+        dump($infoTableMatches);
+        preg_match('/<h2[^>]*>Attributes<\/h2>.*?(?=<h2)/s', $response, $attributesMatches);
+        dump($attributesMatches);
+        preg_match_all('/<a.*?href="(.*?)"/', $attributesMatches[0], $attributeURLs);
+        dump($attributeURLs[1]);
+
+        foreach ($attributeURLs[1] as $attributeURL) {
+          $attribute = preg_replace('/^.+\/Attribute/', '', $attributeURL);
+          if ($attribute[0] === '#') {
+          	$attributeType = lcfirst(substr($attribute, 1)) . 'Attributes';
+            array_push($svgData->elements[$element]->attributes, $attributeType);
+          } else {
+            array_push($svgData->elements[$element]->attributes, '\'' . substr($attribute, 1) . '\'');
+          }
+        }
       }
     }
   }
