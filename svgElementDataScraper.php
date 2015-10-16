@@ -3,7 +3,7 @@
     require_once 'PHPDump/src/debug.php';
   }
 
-  set_time_limit(600);
+  set_time_limit(900);
 
   $jsonFileName = 'svgData.json';
 
