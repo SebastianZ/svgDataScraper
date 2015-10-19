@@ -13,8 +13,17 @@
 
   class svgElement {
     public $categories = [];
+    public $content = null;
     public $attributes = [];
     public $interfaces = [];
+
+    public function __construct() {
+    	$this->content = new svgElementContent();
+    }
+  }
+
+  class svgElementContent {
+  	public $description = '';
   }
 
   $svgData = new svgData();
@@ -95,6 +104,17 @@
             return implode('', $words);
           }, $categories);
           $svgData->elements[$element]->categories = $categories;
+        }
+        // Parse permitted content
+        if (preg_match('/Permitted content.+?<td>(.+?)<\/td>/s', $infoTableMatches[0], $contentMatches)) {
+          $svgData->elements[$element]->content->description = [];
+          $svgData->elements[$element]->content->description[$locale] = $contentMatches[1];
+        	if (preg_match('/^(.+?):(<br>\n\s+<a\s+href=".+?">.+?<\/a>.*)+$/s',
+        			$contentMatches[1], $contentElementListMatches)) {
+            $svgData->elements[$element]->content->description[$locale] = $contentElementListMatches[1];
+            preg_match_all('/<a href=".+?">(?:<code>)?(.*?)(?:<\/code>)?<\/a>/', $contentElementListMatches[2], $elementListMatches);
+            $svgData->elements[$element]->content->elements = $elementListMatches[1];
+          }
         }
         if (preg_match('/<h2[^>]*>Attributes<\/h2>.*?(?=<h2)/s', $response, $attributesMatches)) {
 	        preg_match_all('/<a.*?href="(.*?)"/', $attributesMatches[0], $attributeURLs);
