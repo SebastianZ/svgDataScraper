@@ -116,6 +116,8 @@
             $svgData->elements[$element]->content->elements = $elementListMatches[1];
           }
         }
+
+        // Parse attributes
         if (preg_match('/<h2[^>]*>Attributes<\/h2>.*?(?=<h2)/s', $response, $attributesMatches)) {
 	        preg_match_all('/<a.*?href="(.*?)"/', $attributesMatches[0], $attributeURLs);
 
@@ -128,6 +130,15 @@
 	            array_push($svgData->elements[$element]->attributes, '\'' . substr($attribute, 1) . '\'');
 	          }
 	        }
+        }
+
+        // Parse DOM interfaces
+        if (preg_match('/<h2[^>]*?id="DOM_[iI]nterface"[^>]*>.*?(?=<h2)/s', $response, $domInterfacesMatches)) {
+	        preg_match_all('/<a.*?href="\/.*?\/(?:API|DOM)\/(.+?)"/', $domInterfacesMatches[0], $domInterfacesURLs);
+        	foreach ($domInterfacesURLs[1] as $domInterfacesURL) {
+	          array_push($svgData->elements[$element]->interfaces, $domInterfacesURL);
+	        }
+	        $svgData->elements[$element]->interfaces = array_unique($svgData->elements[$element]->interfaces);
         }
       }
     }
