@@ -29,16 +29,7 @@
   $svgData = new svgData();
 
   $locales = [
-      'en-US',
-      'bn-BD',
-      'de',
-      'es',
-      'fr',
-      'ja',
-      'ko',
-      'pt-BR',
-      'ru',
-      'zh-CN'
+      'en-US'
   ];
   $elementReferenceURL = 'https://developer.mozilla.org/%s/docs/Web/SVG/Element/';
   $outputFolder = 'output';
@@ -90,10 +81,7 @@
           file_put_contents($filePath, $response);
         }
 
-        dump($locale);
-        dump($element);
         preg_match('/<table class="standard-table">(?:.+?)<\/table>/s', $response, $infoTableMatches);
-        dump($infoTableMatches);
         if (preg_match('/Categories.+?<td>(.+?)<\/td>/s', $infoTableMatches[0], $categoriesMatches)) {
           $categories = explode(', ', $categoriesMatches[1]);
           $categories = array_map(function($category) {
@@ -145,4 +133,6 @@
   }
 
   file_put_contents($jsonFileName, json_encode($svgData, JSON_PRETTY_PRINT));
+
+  dump($svgData);
 ?>
