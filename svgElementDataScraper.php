@@ -81,6 +81,7 @@
           file_put_contents($filePath, $response);
         }
 
+        // Parse categories
         preg_match('/<table class="standard-table">(?:.+?)<\/table>/s', $response, $infoTableMatches);
         if (preg_match('/Categories.+?<td>(.+?)<\/td>/s', $infoTableMatches[0], $categoriesMatches)) {
           $categories = explode(', ', $categoriesMatches[1]);
@@ -93,6 +94,7 @@
           }, $categories);
           $svgData->elements[$element]->categories = $categories;
         }
+
         // Parse permitted content
         if (preg_match('/Permitted content.+?<td>(.+?)<\/td>/s', $infoTableMatches[0], $contentMatches)) {
           $svgData->elements[$element]->content->description = [];
@@ -101,7 +103,20 @@
         			$contentMatches[1], $contentElementListMatches)) {
             $svgData->elements[$element]->content->description[$locale] = $contentElementListMatches[1];
             preg_match_all('/<a href=".+?">(?:<code>)?(.*?)(?:<\/code>)?<\/a>/', $contentElementListMatches[2], $elementListMatches);
-            $svgData->elements[$element]->content->elements = $elementListMatches[1];
+
+            $elements = array_map(function($element) {
+              if ($element[0] === '<') {
+                return $element;
+              }
+
+              $words = explode(' ', $element);
+              foreach ($words as $index => $word) {
+                $words[$index] = ($index === 0) ? lcfirst($word) : ucfirst($word);
+              }
+              return implode('', $words);
+            }, $elementListMatches[1]);
+
+            $svgData->elements[$element]->content->elements = $elements;
           }
         }
 
