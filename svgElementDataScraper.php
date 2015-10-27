@@ -135,8 +135,7 @@
                 $contentMatches[1], $contentElementListMatches)) {
               $svgData->elements[$element]->content->description[$locale] = $contentElementListMatches[1];
               if ($locale === 'en-US') {
-                preg_match_all('/<a href=".+?">(?:<code>)?(.*?)(?:<\/code>)?<\/a>/', $contentElementListMatches[2], $elementListMatches);
-
+                preg_match_all('/<a href=".+?["\']>(?:<code>)?(.*?)(?:<\/code>)?<\/a>/', $contentElementListMatches[2], $elementListMatches);
                 $elements = array_map(function($element) {
                   if ($element[0] === '<') {
                     return $element;
