@@ -215,6 +215,25 @@
     			break;
     	}
     }
+
+    switch ($element->content->description['en-US']) {
+      case 'Any number of the following elements, in any order:':
+        $element->content->description = 'anyNumberOfElementsAnyOrder';
+        break;
+
+      case 'Any elements or character data':
+      case 'Any elements or character data.':
+        $element->content->description = 'anyElementsOrCharacterData';
+        break;
+
+      case 'Character data and any number of the following elements, in any order:':
+        $element->content->description = 'characterDataElementsInAnyOrder';
+        break;
+
+      case '<em>Empty</em>':
+        $element->content->description = 'empty';
+        break;
+    }
   }
 
   file_put_contents($jsonFileName, json_encode($svgData, JSON_PRETTY_PRINT));
