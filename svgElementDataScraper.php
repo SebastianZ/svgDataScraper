@@ -110,9 +110,9 @@
           file_put_contents($filePath, $response);
         }
 
-        // Parse categories
         if (preg_match('/<table class="standard-table">(?:.+?)<\/table>/s', $response, $infoTableMatches)) {
-          if (preg_match('/Categories.+?<td>(.+?)<\/td>/s', $infoTableMatches[0], $categoriesMatches)) {
+          // Parse categories
+          if ($locale === 'en-US' && preg_match('/Categories.+?<td>(.+?)<\/td>/s', $infoTableMatches[0], $categoriesMatches)) {
             $categories = explode(', ', $categoriesMatches[1]);
             $categories = array_map(function($category) {
               $words = explode(' ', $category);
@@ -154,7 +154,7 @@
           }
 
           // Parse attributes
-          if (preg_match('/<h2[^>]*>Attributes<\/h2>.*?(?=<h2)/s', $response, $attributesMatches)) {
+          if ($locale === 'en-US' && preg_match('/<h2[^>]*>Attributes<\/h2>.*?(?=<h2)/s', $response, $attributesMatches)) {
             preg_match_all('/<a.*?href="(.*?)"/', $attributesMatches[0], $attributeURLs);
   
             foreach ($attributeURLs[1] as $attributeURL) {
@@ -169,7 +169,7 @@
           }
 
           // Parse DOM interfaces
-          if (preg_match('/<h2[^>]*?id="DOM_[iI]nterface"[^>]*>.*?(?=<h2)/s', $response, $domInterfacesMatches)) {
+          if ($locale === 'en-US' && preg_match('/<h2[^>]*?id="DOM_[iI]nterface"[^>]*>.*?(?=<h2)/s', $response, $domInterfacesMatches)) {
             preg_match_all('/<a.*?href="\/.*?\/(?:API|DOM)\/(.+?)"/', $domInterfacesMatches[0], $domInterfacesURLs);
             foreach ($domInterfacesURLs[1] as $domInterfacesURL) {
               array_push($svgData->elements[$element]->interfaces, $domInterfacesURL);
