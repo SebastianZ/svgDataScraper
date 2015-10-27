@@ -202,6 +202,21 @@
     }
   }
 
+  // Replace common translations by keywords and adjust output
+  foreach ($svgData->elements as $element) {
+    foreach ($element->categories as $index => $categoryElement) {
+    	switch ($categoryElement) {
+    		case 'animateElement':
+    			$element->categories[$index] = 'animationElement';
+    			break;
+
+    		case '<em>None</em>':
+    			$element->categories[$index] = 'noCategory';
+    			break;
+    	}
+    }
+  }
+
   file_put_contents($jsonFileName, json_encode($svgData, JSON_PRETTY_PRINT));
 
   dump($svgData);
