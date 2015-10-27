@@ -131,7 +131,7 @@
               $svgData->elements[$element]->content->description = [];
             }
             $svgData->elements[$element]->content->description[$locale] = $contentMatches[1];
-            if (preg_match('/^(.+?):?(<br\/?>\n\s+<a\s+href=".+?">.+?<\/a>.*)+$/su',
+            if (preg_match('/^(.+?)(<br\/?>\n\s+<a\s+href=".+?">.+?<\/a>.*)+$/su',
                 $contentMatches[1], $contentElementListMatches)) {
               $svgData->elements[$element]->content->description[$locale] = $contentElementListMatches[1];
               if ($locale === 'en-US') {
