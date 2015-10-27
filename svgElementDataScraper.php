@@ -26,6 +26,27 @@
     public $description = '';
   }
 
+
+  function formatAttributeName($name) {
+  	// Remove hash sign at the beginning
+  	$formattedName = substr($name, 1);
+
+  	// Replace underscores by spaces
+  	$formattedName = str_replace('_', ' ', $formattedName);
+
+  	// Fix casing
+  	$formattedName = lcfirst(ucwords($formattedName));
+
+  	// Remove spaces and the word 'Attributes'
+  	$formattedName = str_replace(['Attributes', ' '], '', $formattedName);
+
+  	// Append 'Attributes'
+  	$formattedName .= 'Attributes';
+  	 
+  	return $formattedName;
+  }
+
+
   $svgData = new svgData();
 
   $locales = [
@@ -160,7 +181,7 @@
             foreach ($attributeURLs[1] as $attributeURL) {
               $attribute = preg_replace('/^.+\/Attribute/', '', $attributeURL);
               if ($attribute[0] === '#') {
-                $attributeType = lcfirst(substr($attribute, 1)) . 'Attributes';
+                $attributeType = formatAttributeName($attribute);
                 array_push($svgData->elements[$element]->attributes, $attributeType);
               } else {
                 array_push($svgData->elements[$element]->attributes, '\'' . substr($attribute, 1) . '\'');
